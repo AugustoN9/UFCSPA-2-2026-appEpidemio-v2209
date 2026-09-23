@@ -1,0 +1,995 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      HUF - Monitoria de Epidemiologia: Sulfonilureias & Hipoglicemia
+    </title>
+
+    <!-- Bootstrap 5 CSS -->
+     <link rel="stylesheet" href="css/style.css">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- FontAwesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- MathJax CDN para renderização de fórmulas em LaTeX -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+    ></script>
+  </head>
+  <body>
+    <!-- Header / Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">
+          <i class="fa-solid fa-hospital-user me-2 text-primary"></i>HUF |
+          Farmacovigilância
+        </a>
+        <span class="navbar-text text-light small d-none d-sm-inline">
+          INF06001 - Estudo Caso-Controle Aninhado
+        </span>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section mb-4">
+      <div class="container">
+        <div class="row align-items-center g-3">
+          <div class="col-lg-8">
+            <h1 class="h2 fw-bold">
+              Estudo de Risco: Sulfonilureias & Hipoglicemia
+            </h1>
+            <p class="lead mb-0 fs-6">
+              Análise de 1.270 pacientes da coorte do Hospital Universitário
+              Fictício (HUF) para avaliar a associação entre o uso de
+              sulfonilureias e atendimentos de emergência por hipoglicemia.
+            </p>
+          </div>
+          <div class="col-lg-4 text-lg-end">
+            <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+              <button
+                class="btn btn-light fw-semibold flex-fill flex-lg-grow-0"
+                onclick="mostrarConceitoEstudo()"
+              >
+                <i class="fa-solid fa-graduation-cap me-1"></i> Conceitos Chave
+              </button>
+              <button
+                class="btn btn-warning fw-semibold flex-fill flex-lg-grow-0"
+                data-bs-toggle="modal"
+                data-bs-target="#modalFonteDados"
+              >
+                <i class="fa-solid fa-database me-1"></i> Fonte dos Dados
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="container pb-5">
+      <!-- Section 1: Dashboard Control Panel -->
+      <div class="card card-custom p-3 mb-4">
+        <div class="row g-3 align-items-end">
+          <div class="col-lg-4 col-md-6">
+            <label class="form-label fw-bold small mb-1"
+              ><i class="fa-solid fa-clock-rotate-left me-1"></i> Janela
+              Temporal (Exposição):</label
+            >
+            <select
+              id="selectJanela"
+              class="form-select border-primary"
+              onchange="atualizarDashboard()"
+            >
+              <option value="estrita" selected>
+                Strict 90 dias pré-índice (Metodologia Correta)
+              </option>
+              <option value="qualquer">
+                Qualquer data na extração (Sem Janela - Causalidade Reversa)
+              </option>
+            </select>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <label class="form-label fw-bold small mb-1"
+              ><i class="fa-solid fa-filter me-1"></i> Estratificação por DRC
+              (Doença Renal):</label
+            >
+            <select
+              id="selectDRC"
+              class="form-select border-primary"
+              onchange="atualizarDashboard()"
+            >
+              <option value="todos" selected>
+                Todos os Pacientes (OR Bruta)
+              </option>
+              <option value="sem_drc">Apenas Sem DRC (drc = 0)</option>
+              <option value="com_drc">Apenas Com DRC (drc = 1)</option>
+            </select>
+          </div>
+          <div class="col-lg-4 col-md-12">
+            <button
+              class="btn btn-outline-secondary w-100"
+              onclick="resetFiltros()"
+            >
+              <i class="fa-solid fa-rotate-left me-1"></i> Resetar Filtros
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: KPIs & High-Level Summary -->
+      <div class="row g-3 mb-4">
+        <div class="col-xl-3 col-sm-6">
+          <div
+            class="card card-custom p-3 text-center border-start border-primary border-4 h-100 d-flex flex-column justify-content-center"
+          >
+            <div class="kpi-title">Casos (Hipoglicemia)</div>
+            <div class="kpi-value text-primary" id="kpiCasos">254</div>
+            <small class="text-muted" id="prevCasos">Expostos: 0%</small>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div
+            class="card card-custom p-3 text-center border-start border-info border-4 h-100 d-flex flex-column justify-content-center"
+          >
+            <div class="kpi-title">Controles (Sem Hipoglicemia)</div>
+            <div class="kpi-value text-info" id="kpiControles">1.016</div>
+            <small class="text-muted" id="prevControles">Expostos: 0%</small>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div
+            class="card card-custom p-3 text-center border-start border-danger border-4 h-100 d-flex flex-column justify-content-center"
+          >
+            <div class="kpi-title">Razão de Chances (OR)</div>
+            <div class="kpi-value text-danger" id="kpiOR">0.00</div>
+            <small class="text-muted" id="kpiInterpretation">Efeito Nulo</small>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div
+            class="card card-custom p-3 text-center border-start border-success border-4 h-100 d-flex flex-column justify-content-center"
+          >
+            <div class="kpi-title">Intervalo de Confiança (95%)</div>
+            <div class="kpi-value text-success fs-5 pt-1" id="kpiIC95">
+              [0.00 - 0.00]
+            </div>
+            <small class="text-muted">Método de Woolf</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: 2x2 Contingency Table & Visualizations -->
+      <div class="row g-3 mb-4">
+        <!-- 2x2 Table Column -->
+        <div class="col-lg-5">
+          <div class="card card-custom p-3 p-sm-4 h-100">
+            <h5 class="fw-bold mb-3">📊 Tabela Contingencial 2×2</h5>
+            <div class="table-responsive">
+              <table class="table-2x2 align-middle">
+                <thead>
+                  <tr>
+                    <th>Exposição</th>
+                    <th class="col-casos">Casos (A)</th>
+                    <th class="col-controles">Controles (B)</th>
+                    <th class="fw-bold">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="fw-bold">Expostos (1)</td>
+                    <td id="cell_a" class="highlight-cell col-casos">0</td>
+                    <td id="cell_b" class="highlight-cell col-controles">0</td>
+                    <td id="cell_exp_total" class="fw-bold">0</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">Não Expostos (0)</td>
+                    <td id="cell_c" class="highlight-cell">0</td>
+                    <td id="cell_d" class="highlight-cell">0</td>
+                    <td id="cell_noexp_total" class="fw-bold">0</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr class="total-row">
+                    <td>Total</td>
+                    <td id="cell_cases_total">254</td>
+                    <td id="cell_controls_total">1016</td>
+                    <td id="cell_grand_total">1270</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <!-- Caixa da Fórmula da OR e Cálculo com MathJax -->
+            <div class="formula-box">
+              <div class="formula-header">
+                🧮 <span>Fórmula da Odds Ratio (OR):</span>
+              </div>
+              <div class="math-display">
+                $$\text{OR} = \frac{a \times d}{b \times c}$$
+              </div>
+              <div class="math-subtitle">
+                Demonstração do cálculo com os dados da tabela:
+              </div>
+              <div class="math-display" id="math-demo">
+                $$\text{OR} = \frac{102 \times 813}{203 \times 152} =
+                \frac{82.926}{30.856} \approx 2{,}69$$
+              </div>
+            </div>
+
+            <!-- Secção Explicativa -->
+            <div class="explanation-section">
+              <h3>1. Definição das Linhas (Exposição)</h3>
+              <ul>
+                <li>
+                  <strong>Expostos (1):</strong> Grupo de indivíduos submetidos
+                  ao fator de risco ou tratamento.
+                </li>
+                <li>
+                  <strong>Não Expostos (0):</strong> Grupo de referência
+                  composto por indivíduos sem contacto com o fator.
+                </li>
+              </ul>
+
+              <h3>2. Definição das Colunas (Desfecho / Doença)</h3>
+              <ul>
+                <li>
+                  <strong>Casos (A):</strong> Indivíduos que apresentam o
+                  desfecho em estudo.
+                </li>
+                <li>
+                  <strong>Controles / Controlos (B):</strong> Indivíduos que
+                  <em>não</em> apresentam o desfecho investigado.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts & Summary Column -->
+        <div class="col-lg-7">
+          <div class="card card-custom p-3 p-sm-4 h-100">
+            <h5 class="fw-bold mb-3">
+              <i class="fa-solid fa-chart-bar me-2 text-primary"></i>Prevalência
+              de Exposição (%)
+            </h5>
+            <div style="position: relative; height: 260px; width: 100%">
+              <canvas id="chartPrevalencia"></canvas>
+            </div>
+
+            <!-- Guia explicativo dentro do cartão -->
+            <div class="explanation-section">
+              <h4>Conceito e Finalidade da Odds Ratio (OR)</h4>
+              <p>
+                A <strong>Odds Ratio (OR)</strong>, ou
+                <em>Razão de Chances</em>, compara a chance de ocorrência de um
+                evento no grupo exposto relativamente ao grupo não exposto.
+              </p>
+              <ul>
+                <li>
+                  <strong>\(\text{OR} = 1\):</strong> A exposição não interfere
+                  na ocorrência do desfecho.
+                </li>
+                <li>
+                  <strong>\(\text{OR} > 1\):</strong> A exposição é um
+                  <strong>fator de risco</strong> (ex.: no cenário estrito, os
+                  expostos têm ~2,68 vezes mais chance de hipoglicemia).
+                </li>
+                <li>
+                  <strong>\(\text{OR} < 1\):</strong> A exposição funciona como
+                  um <strong>fator de proteção</strong>.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Epidemiological Answers & Clinical Analysis -->
+      <div class="card card-custom p-3 p-sm-4 mb-4">
+        <h4 class="fw-bold mb-4 text-primary fs-5 fs-sm-4">
+          <i class="fa-solid fa-clipboard-question me-2"></i>Roteiro de
+          Respostas & Análise Crítica
+        </h4>
+
+        <div class="accordion" id="accordionRoteiro">
+          <!-- Item: Diferença Caso-Controle Aninhado vs Caso-Coorte -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button fw-bold text-primary"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#q_diferenca_desenhos"
+              >
+                🔬 Diferenças Epidemiológicas: Caso-Controle Aninhado vs.
+                Caso-Coorte
+              </button>
+            </h2>
+            <div
+              id="q_diferenca_desenhos"
+              class="accordion-collapse collapse show"
+              data-bs-parent="#accordionRoteiro"
+            >
+              <div class="accordion-body">
+                <p>
+                  Ambos os desenhos são estratégias eficientes de amostragem
+                  conduzidas dentro de um estudo de coorte pré-existente para
+                  reduzir custos e tempo de coleta de dados. A diferença
+                  fundamental reside na
+                  <strong>forma como o grupo controle é selecionado</strong>:
+                </p>
+
+                <div class="table-responsive my-3">
+                  <table
+                    class="table table-bordered table-hover align-middle table-comparacao"
+                  >
+                    <thead class="table-light">
+                      <tr>
+                        <th>Característica</th>
+                        <th>Caso-Controle Aninhado (Nested Case-Control)</th>
+                        <th>Caso-Coorte (Case-Cohort)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="fw-bold">Amostragem dos Controles</td>
+                        <td>
+                          Selecionados do <strong>risk set</strong> (indivíduos
+                          vivos e sem o evento no momento exato em que cada caso
+                          ocorre). Usa pareamento por tempo de incidência
+                          (Density Sampling).
+                        </td>
+                        <td>
+                          Selecionados de uma
+                          <strong>subcoorte aleatória</strong> sorteada no
+                          início do estudo (Baseline), independentemente do
+                          tempo ou da ocorrência do desfecho.
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="fw-bold">Reutilização de Controles</td>
+                        <td>
+                          Um indivíduo selecionado como controle para um caso
+                          pode tornar-se um caso mais tarde no tempo de
+                          seguimento.
+                        </td>
+                        <td>
+                          A subcoorte original é fixa e serve como grupo de
+                          comparação para
+                          <strong>múltiplos desfechos diferentes</strong> ao
+                          longo da pesquisa.
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="fw-bold">Medida de Associação Estimada</td>
+                        <td>
+                          Estima diretamente a
+                          <strong
+                            >Razão de Taxas de Incidência (Hazard Ratio / Rate
+                            Ratio)</strong
+                          >
+                          via Odds Ratio do pareamento por densidade de
+                          incidência.
+                        </td>
+                        <td>
+                          Estima o <strong>Risco Relativo (RR)</strong> ou Razão
+                          de Riscos Acumulados, necessitando de ponderação
+                          estatística específica.
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="fw-bold">Principal Vantagem</td>
+                        <td>
+                          Excelente alinhamento temporal e controle de viés de
+                          tempo de acompanhamento para exposições variáveis no
+                          tempo.
+                        </td>
+                        <td>
+                          Permite estudar vários desfechos distintos utilizando
+                          a mesma subcoorte de controles (maior eficiência
+                          logística).
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q1 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed fw-bold"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#q1"
+              >
+                Q1. Códigos ATC de Sulfonilureias e Contagem de Prescrições
+              </button>
+            </h2>
+            <div
+              id="q1"
+              class="accordion-collapse collapse"
+              data-bs-parent="#accordionRoteiro"
+            >
+              <div class="accordion-body">
+                <p>
+                  Consultando o Dicionário de Dados do HUF (aba ATC), o subgrupo
+                  químico das sulfonilureias corresponde ao código
+                  <strong>A10BB</strong>. Os códigos específicos encontrados
+                  são:
+                </p>
+                <ul>
+                  <li>
+                    <span class="badge-atc">A10BB01</span> Glibenclamida[cite:
+                    1]
+                  </li>
+                  <li>
+                    <span class="badge-atc">A10BB09</span> Gliclazida[cite: 1]
+                  </li>
+                  <li>
+                    <span class="badge-atc">A10BB12</span> Glimepirida[cite: 1]
+                  </li>
+                </ul>
+                <div class="alert alert-info py-2">
+                  <strong>Resultado:</strong> No arquivo
+                  <code>prescricoes.csv</code> existem
+                  <strong>4.812 prescrições</strong> de sulfonilureia no total
+                  (de um total de 24.101 linhas)[cite: 1].
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed fw-bold"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#q2"
+              >
+                Q2. Comparação da Média de Idade e DRC entre Casos e Controles
+              </button>
+            </h2>
+            <div
+              id="q2"
+              class="accordion-collapse collapse"
+              data-bs-parent="#accordionRoteiro"
+            >
+              <div class="accordion-body">
+                <div class="row text-center g-3 mb-3">
+                  <div class="col-md-6">
+                    <div class="p-3 bg-light rounded">
+                      <h6>Casos (Hipoglicemia)</h6>
+                      <p class="mb-1">
+                        <strong>Idade Média:</strong> ~68.4 anos
+                      </p>
+                      <p class="mb-0"><strong>Proporção DRC:</strong> ~42.1%</p>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="p-3 bg-light rounded">
+                      <h6>Controles</h6>
+                      <p class="mb-1">
+                        <strong>Idade Média:</strong> ~61.2 anos
+                      </p>
+                      <p class="mb-0"><strong>Proporção DRC:</strong> ~18.5%</p>
+                    </div>
+                  </div>
+                </div>
+                <p>
+                  <strong>O que chama a atenção?</strong> Os casos são
+                  significativamente mais velhos e possuem uma prevalência de
+                  Doença Renal Crônica (DRC) mais de duas vezes superior à dos
+                  controles[cite: 1]. A DRC prejudica a depuração renal das
+                  sulfonilureias, prolongando sua meia-vida e aumentando o risco
+                  de hipoglicemia. Isso levanta a suspeita de que a DRC atue
+                  como uma <em>variável de confundimento</em>.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q3 & Q4 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed fw-bold"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#q3_q4"
+              >
+                Q3 & Q4. Exposição Estrita (90 dias), Tabela 2x2 e OR
+              </button>
+            </h2>
+            <div
+              id="q3_q4"
+              class="accordion-collapse collapse"
+              data-bs-parent="#accordionRoteiro"
+            >
+              <div class="accordion-body">
+                <p>
+                  Respeitando a janela temporal de exposição de
+                  <strong>90 dias anteriores à data índice</strong> (descartando
+                  prescrições no dia do atendimento ou posteriores):
+                </p>
+                <ul>
+                  <li>
+                    <strong>Prevalência de Exposição nos Casos:</strong> 40.15%
+                    (102 / 254)
+                  </li>
+                  <li>
+                    <strong>Prevalência de Exposição nos Controles:</strong>
+                    19.98% (203 / 1016)
+                  </li>
+                  <li>
+                    <strong>OR Bruta (Woolf):</strong> <strong>2.68</strong> (IC
+                    95%: 2.00 a 3.60)
+                  </li>
+                </ul>
+                <div class="alert alert-success">
+                  <strong
+                    >Frase de Interpretação para a Comissão de
+                    Farmacovigilância:</strong
+                  ><br />
+                  "Pacientes com diabetes tipo 2 expostos a sulfonilureias nos
+                  90 dias anteriores à data índice apresentaram uma chance
+                  <strong>2,68 vezes maior</strong> de serem atendidos na
+                  emergência por hipoglicemia em comparação àqueles não expostos
+                  (IC 95%: 2,00 a 3,60)."
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed fw-bold"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#q5"
+              >
+                Q5. E se ignorássemos o tempo? (Causalidade Reversa)
+              </button>
+            </h2>
+            <div
+              id="q5"
+              class="accordion-collapse collapse"
+              data-bs-parent="#accordionRoteiro"
+            >
+              <div class="accordion-body">
+                <p>
+                  Se redefinirmos a exposição como "qualquer prescrição de
+                  sulfonilureia em qualquer data da extração":
+                </p>
+                <ul>
+                  <li>
+                    A nova <strong>OR cai para ~1.15</strong> (muito mais
+                    próxima do nulo 1.0).
+                  </li>
+                </ul>
+                <p><strong>Por que a OR desceu?</strong></p>
+                <p>
+                  Quando o paciente dá entrada na emergência com hipoglicemia
+                  grave, a conduta médica imediata é
+                  <strong
+                    >suspender ou reduzir a dosagem da sulfonilureia</strong
+                  >
+                  para evitar novos eventos. Se contabilizarmos as prescrições
+                  feitas <em>após</em> a data índice, o grupo dos casos passa a
+                  ter menos prescrições ativas. Isso gera o fenômeno de
+                  <strong>causalidade reversa</strong> (o desfecho altera a
+                  exposição futura), diluindo a associação real[cite: 2].
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q6 & Q7 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button collapsed fw-bold"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#q6_q7"
+              >
+                Q6 & Q7. Confundimento por DRC e Vieses em Prontuários (PEP)
+              </button>
+            </h2>
+            <div
+              id="q6_q7"
+              class="accordion-collapse collapse"
+              data-bs-parent="#accordionRoteiro"
+            >
+              <div class="accordion-body">
+                <h6>Q6. Análise Estratificada por DRC</h6>
+                <p>Ao calcular a OR separadamente em cada estrato de DRC:</p>
+                <ul>
+                  <li>
+                    <strong>OR em Pacientes Sem DRC (drc = 0):</strong> ~2.10
+                  </li>
+                  <li>
+                    <strong>OR em Pacientes Com DRC (drc = 1):</strong> ~2.15
+                  </li>
+                  <li><strong>OR Bruta (Sem estratificar):</strong> 2.68</li>
+                </ul>
+                <p>
+                  <strong>Conclusão:</strong> Como as ORs estratificadas são
+                  semelhantes entre si (2.10 e 2.15), mas menores que a OR bruta
+                  (2.68), confirma-se que a
+                  <strong>DRC é uma variável de confundimento</strong>. A OR
+                  bruta estava inflada porque a DRC está associada tanto à
+                  hipoglicemia quanto ao padrão de prescrição.
+                </p>
+
+                <hr />
+
+                <h6>
+                  Q7. Duas Fontes Típicas de Viés em Dados de Prontuário (PEP)
+                </h6>
+                <ol>
+                  <li>
+                    <strong
+                      >Viés de Mensuração da Exposição (Adesão
+                      Terapêutica):</strong
+                    >
+                    O PEP registra a prescrição médica emitida, mas não garante
+                    que o paciente comprou e realmente tomou o medicamento[cite:
+                    2].
+                  </li>
+                  <li>
+                    <strong>Viés de Subnotificação do Desfecho:</strong> Eventos
+                    de hipoglicemia leve tratados em casa pelo paciente não
+                    chegam ao prontuário da emergência do HUF, podendo fazer com
+                    que casos leves sejam classificados indevidamente como
+                    controles[cite: 2].
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: Fonte dos Dados e Visualização das Amostras -->
+    <div
+      class="modal fade"
+      id="modalFonteDados"
+      tabindex="-1"
+      aria-labelledby="modalFonteDadosLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header bg-warning text-dark">
+            <h5 class="modal-title fw-bold" id="modalFonteDadosLabel">
+              <i class="fa-solid fa-database me-2"></i>Fonte dos Dados (HUF) &
+              Amostra das Bases
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>
+              Dados simulados para o exercício da disciplina
+              <strong>INF06001 - UFCSPA</strong>[cite: 1]. Abaixo está a
+              amostragem dos dados contidos nos arquivos originais de extração
+              do PEP (Prontuário Eletrônico do Paciente):
+            </p>
+
+            <nav>
+              <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button
+                  class="nav-link active fw-bold"
+                  id="nav-pacientes-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#nav-pacientes"
+                  type="button"
+                  role="tab"
+                >
+                  📄 base_caso_controle.csv (1.270 linhas)
+                </button>
+                <button
+                  class="nav-link fw-bold"
+                  id="nav-prescricoes-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#nav-prescricoes"
+                  type="button"
+                  role="tab"
+                >
+                  💊 prescricoes.csv (24.101 linhas)
+                </button>
+                <button
+                  class="nav-link fw-bold"
+                  id="nav-dicionario-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#nav-dicionario"
+                  type="button"
+                  role="tab"
+                >
+                  📖 Dicionário de Dados
+                </button>
+              </div>
+            </nav>
+
+            <div class="tab-content pt-3" id="nav-tabContent">
+              <!-- Aba 1: Pacientes -->
+              <div
+                class="tab-pane fade show active"
+                id="nav-pacientes"
+                role="tabpanel"
+              >
+                <h6>
+                  Amostra dos Dados dos Pacientes (
+                  <code>base_caso_controle.csv</code> )
+                </h6>
+                <div class="table-responsive">
+                  <table
+                    class="table table-sm table-striped table-hover border data-sample-table"
+                  >
+                    <thead>
+                      <tr>
+                        <th>id_paciente</th>
+                        <th>idade</th>
+                        <th>sexo</th>
+                        <th>drc</th>
+                        <th>data_indice</th>
+                        <th>desfecho (caso)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code>PAC_0001</code></td>
+                        <td>68</td>
+                        <td>M</td>
+                        <td><span class="badge bg-danger">1 (Sim)</span></td>
+                        <td>2023-05-14</td>
+                        <td>
+                          <span class="badge bg-danger">1 (Caso)</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><code>PAC_0002</code></td>
+                        <td>62</td>
+                        <td>F</td>
+                        <td><span class="badge bg-secondary">0 (Não)</span></td>
+                        <td>2023-05-14</td>
+                        <td>
+                          <span class="badge bg-info text-dark"
+                            >0 (Controle)</span
+                          >
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><code>PAC_0003</code></td>
+                        <td>71</td>
+                        <td>F</td>
+                        <td><span class="badge bg-danger">1 (Sim)</span></td>
+                        <td>2023-06-01</td>
+                        <td>
+                          <span class="badge bg-danger">1 (Caso)</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><code>PAC_0004</code></td>
+                        <td>59</td>
+                        <td>M</td>
+                        <td><span class="badge bg-secondary">0 (Não)</span></td>
+                        <td>2023-06-01</td>
+                        <td>
+                          <span class="badge bg-info text-dark"
+                            >0 (Controle)</span
+                          >
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><code>PAC_0005</code></td>
+                        <td>65</td>
+                        <td>M</td>
+                        <td><span class="badge bg-secondary">0 (Não)</span></td>
+                        <td>2023-06-10</td>
+                        <td>
+                          <span class="badge bg-info text-dark"
+                            >0 (Controle)</span
+                          >
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <small class="text-muted"
+                  >* Exibindo 5 de 1.270 registros da coorte selecionada.</small
+                >
+              </div>
+
+              <!-- Aba 2: Prescrições -->
+              <div class="tab-pane fade" id="nav-prescricoes" role="tabpanel">
+                <h6>
+                  Amostra dos Registros de Prescrição (
+                  <code>prescricoes.csv</code> )
+                </h6>
+                <div class="table-responsive">
+                  <table
+                    class="table table-sm table-striped table-hover border data-sample-table"
+                  >
+                    <thead>
+                      <tr>
+                        <th>id_prescricao</th>
+                        <th>id_paciente</th>
+                        <th>medicamento</th>
+                        <th>codigo_atc</th>
+                        <th>data_prescricao</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code>RX_10293</code></td>
+                        <td><code>PAC_0001</code></td>
+                        <td>Glibenclamida 5mg</td>
+                        <td><span class="badge-atc">A10BB01</span></td>
+                        <td>2023-03-20</td>
+                      </tr>
+                      <tr>
+                        <td><code>RX_10294</code></td>
+                        <td><code>PAC_0001</code></td>
+                        <td>Metformina 850mg</td>
+                        <td><span class="badge-atc">A10BA02</span></td>
+                        <td>2023-03-20</td>
+                      </tr>
+                      <tr>
+                        <td><code>RX_10411</code></td>
+                        <td><code>PAC_0002</code></td>
+                        <td>Metformina 850mg</td>
+                        <td><span class="badge-atc">A10BA02</span></td>
+                        <td>2023-02-15</td>
+                      </tr>
+                      <tr>
+                        <td><code>RX_10852</code></td>
+                        <td><code>PAC_0003</code></td>
+                        <td>Gliclazida 60mg MR</td>
+                        <td><span class="badge-atc">A10BB09</span></td>
+                        <td>2023-04-10</td>
+                      </tr>
+                      <tr>
+                        <td><code>RX_11200</code></td>
+                        <td><code>PAC_0004</code></td>
+                        <td>Glimepirida 2mg</td>
+                        <td><span class="badge-atc">A10BB12</span></td>
+                        <td>2023-08-05</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <small class="text-muted"
+                  >* Exibindo 5 de 24.101 registros extraídos do PEP.</small
+                >
+              </div>
+
+              <!-- Aba 3: Dicionário -->
+              <div class="tab-pane fade" id="nav-dicionario" role="tabpanel">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="p-3 border rounded bg-light">
+                      <h6 class="fw-bold text-primary">
+                        Tabela de Pacientes (Coorte)
+                      </h6>
+                      <ul class="list-unstyled mb-0 small">
+                        <li>
+                          <strong>id_paciente:</strong> Código único de
+                          identificação do indivíduo.
+                        </li>
+                        <li>
+                          <strong>idade:</strong> Idade do paciente em anos na
+                          data índice.
+                        </li>
+                        <li><strong>sexo:</strong> Sexo biológico (M/F).</li>
+                        <li>
+                          <strong>drc:</strong> Presença de Doença Renal Crônica
+                          (1 = Sim, 0 = Não).
+                        </li>
+                        <li>
+                          <strong>data_indice:</strong> Data da hipoglicemia
+                          (Casos) ou data de pareamento (Controles).
+                        </li>
+                        <li>
+                          <strong>caso:</strong> Desfecho de estudo (1 = Caso, 0
+                          = Controle).
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="p-3 border rounded bg-light">
+                      <h6 class="fw-bold text-primary">
+                        Tabela de Prescrições
+                      </h6>
+                      <ul class="list-unstyled mb-0 small">
+                        <li>
+                          <strong>id_prescricao:</strong> Identificador único do
+                          receituário.
+                        </li>
+                        <li>
+                          <strong>id_paciente:</strong> Código chave de ligação
+                          com a tabela do paciente.
+                        </li>
+                        <li>
+                          <strong>medicamento:</strong> Nome comercial ou
+                          princípio ativo.
+                        </li>
+                        <li>
+                          <strong>codigo_atc:</strong> Classificação Anatômica
+                          Terapêutica Química (Ex.: A10BB para Sulfonilureias).
+                        </li>
+                        <li>
+                          <strong>data_prescricao:</strong> Data de emissão da
+                          receita.
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3">
+      <div class="container">
+        <small
+          >HUF - Hospital Universitário Fictício | Disciplina INF06001 (UFCSPA)
+          | Material Didático Simulado</small
+        >
+      </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Application JavaScript Logic -->
+    <script src="js/script.js"></script>
+  </body>
+</html>

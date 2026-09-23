@@ -1,0 +1,167 @@
+:root {
+        --bg-color: #f8f9fa;
+        --border-color: #e1e4e8;
+        --casos-color: #d93025;
+        --controles-color: #007ac1;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #f4f6f9;
+        color: #2c3e50;
+      }
+      .navbar-brand {
+        font-weight: 700;
+        letter-spacing: -0.5px;
+      }
+      .hero-section {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+        color: white;
+        padding: 2.5rem 0;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+      }
+      .card-custom {
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        background-color: #ffffff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .card-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+      }
+      .kpi-title {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #6c757d;
+        font-weight: 600;
+      }
+      .kpi-value {
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .badge-atc {
+        font-family: monospace;
+        background-color: #e9ecef;
+        color: #495057;
+        padding: 4px 8px;
+        border-radius: 4px;
+      }
+
+      /* Estilização Estética da Tabela Contingencial */
+      .table-2x2 {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 20px;
+      }
+      .table-2x2 th,
+      .table-2x2 td {
+        text-align: center;
+        vertical-align: middle;
+        padding: 10px 12px;
+        border: 1px solid var(--border-color);
+        font-size: 0.9rem;
+      }
+      .table-2x2 th {
+        font-weight: 700;
+        color: #24292e;
+        background-color: #ffffff;
+      }
+      .col-casos {
+        color: var(--casos-color) !important;
+        font-weight: 700;
+      }
+      .col-controles {
+        color: var(--controles-color) !important;
+        font-weight: 700;
+      }
+      .highlight-cell {
+        background-color: #ffffff;
+        font-weight: 700;
+      }
+      .table-2x2 tr.total-row td {
+        border-top: 2px solid #24292e;
+        font-weight: 700;
+      }
+
+      /* Tabela de Comparação Caso-Controle vs Caso-Coorte */
+      .table-comparacao th,
+      .table-comparacao td {
+        font-size: 0.88rem;
+        padding: 10px;
+      }
+
+      /* Caixa da Fórmula MathJax estilo Card */
+      .formula-box {
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 15px;
+        margin-bottom: 20px;
+        text-align: left;
+        overflow-x: auto;
+      }
+      .formula-header {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #24292e;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .math-display {
+        text-align: center;
+        margin: 10px 0;
+        max-width: 100%;
+        overflow-x: auto;
+      }
+      .math-subtitle {
+        font-weight: 700;
+        color: #24292e;
+        font-size: 0.9rem;
+        margin-top: 16px;
+        margin-bottom: 8px;
+      }
+
+      /* Seção Explicativa */
+      .explanation-section {
+        border-top: 1px solid var(--border-color);
+        padding-top: 20px;
+        margin-top: 24px;
+      }
+      .explanation-section h3,
+      .explanation-section h4 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #111827;
+        margin-top: 18px;
+        margin-bottom: 10px;
+      }
+      .explanation-section ul {
+        padding-left: 20px;
+        margin-bottom: 16px;
+      }
+      .explanation-section li {
+        margin-bottom: 6px;
+      }
+
+      /* Estilização para as tabelas de amostra de dados no Modal */
+      .data-sample-table {
+        font-size: 0.82rem;
+      }
+      .data-sample-table th {
+        background-color: #f1f3f5;
+        font-weight: 600;
+      }
+
+      /* Ajustes de responsividade */
+      @media (max-width: 991px) {
+        .kpi-value {
+          font-size: 1.4rem;
+        }
+      }

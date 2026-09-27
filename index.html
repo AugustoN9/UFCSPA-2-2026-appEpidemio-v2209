@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
@@ -8,7 +8,6 @@
     </title>
 
     <!-- Bootstrap 5 CSS -->
-     <link rel="stylesheet" href="css/style.css">
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -23,6 +22,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="css/style2.css">
 
     <!-- MathJax CDN para renderização de fórmulas em LaTeX -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -31,6 +31,7 @@
       async
       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
     ></script>
+
   </head>
   <body>
     <!-- Header / Navbar -->
@@ -128,6 +129,115 @@
             >
               <i class="fa-solid fa-rotate-left me-1"></i> Resetar Filtros
             </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Guia Didático dos Filtros e Opções (Barras Retráteis) -->
+      <div class="card card-custom p-4 mb-4 filter-guide-card">
+        <div class="d-flex align-items-center mb-3">
+          <i class="fa-solid fa-circle-info text-primary fs-4 me-2"></i>
+          <h5 class="fw-bold mb-0 text-primary">Como funcionam os Filtros do Painel?</h5>
+        </div>
+        <p class="text-muted small mb-3">
+          Clique nas barras abaixo para expandir e entender o que cada opção significa e como altera os números e gráficos:
+        </p>
+
+        <div class="accordion accordion-collapsible" id="accordionFiltrosGuia">
+          <!-- Item Retrátil 1: Janela Temporal -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingJanelaGuia">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseJanelaGuia"
+                aria-expanded="false"
+                aria-controls="collapseJanelaGuia"
+              >
+                <i class="fa-solid fa-clock-rotate-left me-2"></i> 1. Janela Temporal (Exposição ao Remédio)
+              </button>
+            </h2>
+            <div
+              id="collapseJanelaGuia"
+              class="accordion-collapse collapse"
+              aria-labelledby="headingJanelaGuia"
+              data-bs-parent="#accordionFiltrosGuia"
+            >
+              <div class="accordion-body bg-light">
+                <p class="small text-muted mb-3">
+                  Define <strong>quando</strong> o paciente tomou o medicamento em relação ao momento em que passou mal.
+                </p>
+                
+                <div class="mb-3">
+                  <span class="badge bg-primary mb-1">Strict 90 dias pré-índice (Metodologia Correta)</span>
+                  <ul class="small mb-0 ps-3">
+                    <li><strong>O que faz:</strong> Considera apenas as prescrições feitas nos <strong>90 dias anteriores</strong> ao evento de hipoglicemia.</li>
+                    <li><strong>O que muda na tela:</strong> Garante a relação correta de causa e efeito (o remédio veio antes da crise). Mostra que quem usou o remédio recente tem <strong>~2,68 vezes mais risco</strong> de ter hipoglicemia.</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <span class="badge bg-secondary mb-1">Qualquer data na extração (Causalidade Reversa)</span>
+                  <ul class="small mb-0 ps-3">
+                    <li><strong>O que faz:</strong> Conta receitas médicas em <strong>qualquer data</strong>, inclusive as prescritas <em>depois</em> que o paciente deu entrada no hospital.</li>
+                    <li><strong>O que muda na tela:</strong> A taxa de risco cai para <strong>~1,15</strong> (parece que o remédio não faz mal). Isso acontece porque médicos costumam cortar o remédio após uma crise grave, distorcendo os dados.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item Retrátil 2: DRC -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingDRCGuia">
+              <button
+                class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseDRCGuia"
+                aria-expanded="false"
+                aria-controls="collapseDRCGuia"
+              >
+                <i class="fa-solid fa-filter me-2"></i> 2. Estratificação por DRC (Doença Renal Crônica)
+              </button>
+            </h2>
+            <div
+              id="collapseDRCGuia"
+              class="accordion-collapse collapse"
+              aria-labelledby="headingDRCGuia"
+              data-bs-parent="#accordionFiltrosGuia"
+            >
+              <div class="accordion-body bg-light">
+                <p class="small text-muted mb-3">
+                  Permite separar a análise entre pessoas com e sem <strong>problemas nos rins</strong>.
+                </p>
+
+                <div class="mb-2">
+                  <span class="badge bg-primary mb-1">Todos os Pacientes (OR Bruta)</span>
+                  <ul class="small mb-0 ps-3">
+                    <li><strong>O que faz:</strong> Junta todos os 1.270 pacientes em um único grupo geral.</li>
+                    <li><strong>O que muda na tela:</strong> Exibe o resultado global sem separar por saúde renal.</li>
+                  </ul>
+                </div>
+
+                <div class="mb-2">
+                  <span class="badge bg-secondary mb-1">Apenas Sem DRC (drc = 0)</span>
+                  <ul class="small mb-0 ps-3">
+                    <li><strong>O que faz:</strong> Filtra a tela para mostrar <strong>apenas pacientes com rins saudáveis</strong> (975 pessoas).</li>
+                    <li><strong>O que muda na tela:</strong> O risco cai para <strong>~2,10</strong>, revelando o efeito isolado do medicamento em quem não tem complicação renal.</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <span class="badge bg-secondary mb-1">Apenas Com DRC (drc = 1)</span>
+                  <ul class="small mb-0 ps-3">
+                    <li><strong>O que faz:</strong> Filtra a tela para mostrar <strong>apenas pacientes com doença nos rins</strong> (295 pessoas).</li>
+                    <li><strong>O que muda na tela:</strong> Mostra o comportamento do medicamento nesse grupo específico. A doença renal prolonga o efeito do remédio no corpo.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -232,31 +342,50 @@
               </div>
             </div>
 
-            <!-- Secção Explicativa -->
-            <div class="explanation-section">
-              <h3>1. Definição das Linhas (Exposição)</h3>
-              <ul>
-                <li>
-                  <strong>Expostos (1):</strong> Grupo de indivíduos submetidos
-                  ao fator de risco ou tratamento.
-                </li>
-                <li>
-                  <strong>Não Expostos (0):</strong> Grupo de referência
-                  composto por indivíduos sem contacto com o fator.
-                </li>
-              </ul>
+            <!-- Secção Explicativa em Barra Retrátil -->
+            <div class="accordion accordion-collapsible mt-3" id="accordionTabelaExplicativa">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTabelaExplicativa">
+                  <button
+                    class="accordion-button collapsed"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapseTabelaExplicativa"
+                    aria-expanded="false"
+                    aria-controls="collapseTabelaExplicativa"
+                  >
+                    💡 Entenda as Definições da Tabela 2×2
+                  </button>
+                </h2>
+                <div
+                  id="collapseTabelaExplicativa"
+                  class="accordion-collapse collapse"
+                  aria-labelledby="headingTabelaExplicativa"
+                  data-bs-parent="#accordionTabelaExplicativa"
+                >
+                  <div class="accordion-body bg-light">
+                    <h6 class="fw-bold text-dark">1. Definição das Linhas (Exposição)</h6>
+                    <ul class="small">
+                      <li>
+                        <strong>Expostos (1):</strong> Grupo de indivíduos submetidos ao fator de risco ou tratamento.
+                      </li>
+                      <li>
+                        <strong>Não Expostos (0):</strong> Grupo de referência composto por indivíduos sem contacto com o fator.
+                      </li>
+                    </ul>
 
-              <h3>2. Definição das Colunas (Desfecho / Doença)</h3>
-              <ul>
-                <li>
-                  <strong>Casos (A):</strong> Indivíduos que apresentam o
-                  desfecho em estudo.
-                </li>
-                <li>
-                  <strong>Controles / Controlos (B):</strong> Indivíduos que
-                  <em>não</em> apresentam o desfecho investigado.
-                </li>
-              </ul>
+                    <h6 class="fw-bold text-dark mt-2">2. Definição das Colunas (Desfecho / Doença)</h6>
+                    <ul class="small mb-0">
+                      <li>
+                        <strong>Casos (A):</strong> Indivíduos que apresentam o desfecho em estudo.
+                      </li>
+                      <li>
+                        <strong>Controles / Controlos (B):</strong> Indivíduos que <em>não</em> apresentam o desfecho investigado.
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -272,73 +401,85 @@
               <canvas id="chartPrevalencia"></canvas>
             </div>
 
-            <!-- Guia explicativo dentro do cartão -->
-            <div class="explanation-section">
-              <h4>Conceito e Finalidade da Odds Ratio (OR)</h4>
-              <p>
-                A <strong>Odds Ratio (OR)</strong>, ou
-                <em>Razão de Chances</em>, compara a chance de ocorrência de um
-                evento no grupo exposto relativamente ao grupo não exposto.
-              </p>
-              <ul>
-                <li>
-                  <strong>\(\text{OR} = 1\):</strong> A exposição não interfere
-                  na ocorrência do desfecho.
-                </li>
-                <li>
-                  <strong>\(\text{OR} > 1\):</strong> A exposição é um
-                  <strong>fator de risco</strong> (ex.: no cenário estrito, os
-                  expostos têm ~2,68 vezes mais chance de hipoglicemia).
-                </li>
-                <li>
-                  <strong>\(\text{OR} < 1\):</strong> A exposição funciona como
-                  um <strong>fator de proteção</strong>.
-                </li>
-              </ul>
+            <!-- Guia explicativo em Barra Retrátil -->
+            <div class="accordion accordion-collapsible mt-4" id="accordionGraficoExplicativo">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingGraficoExplicativo">
+                  <button
+                    class="accordion-button collapsed"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapseGraficoExplicativo"
+                    aria-expanded="false"
+                    aria-controls="collapseGraficoExplicativo"
+                  >
+                    📖 Conceito e Finalidade da Odds Ratio (OR)
+                  </button>
+                </h2>
+                <div
+                  id="collapseGraficoExplicativo"
+                  class="accordion-collapse collapse"
+                  aria-labelledby="headingGraficoExplicativo"
+                  data-bs-parent="#accordionGraficoExplicativo"
+                >
+                  <div class="accordion-body bg-light">
+                    <p class="small">
+                      A <strong>Odds Ratio (OR)</strong>, ou <em>Razão de Chances</em>, compara a chance de ocorrência de um evento no grupo exposto em relação ao grupo não exposto.
+                    </p>
+                    <ul class="small mb-0 ps-3">
+                      <li>
+                        <strong>\(\text{OR} = 1\):</strong> A exposição não interfere na ocorrência do desfecho.
+                      </li>
+                      <li>
+                        <strong>\(\text{OR} > 1\):</strong> A exposição é um <strong>fator de risco</strong> (ex.: no cenário estrito, os expostos têm ~2,68 vezes mais chance de hipoglicemia).
+                      </li>
+                      <li>
+                        <strong>\(\text{OR} < 1\):</strong> A exposição funciona como um <strong>fator de proteção</strong>.
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Section 4: Epidemiological Answers & Clinical Analysis -->
+      <!-- Section 4: Epidemiological Answers & Clinical Analysis (Barras Retráteis Estilo Imagem 2) -->
       <div class="card card-custom p-3 p-sm-4 mb-4">
         <h4 class="fw-bold mb-4 text-primary fs-5 fs-sm-4">
           <i class="fa-solid fa-clipboard-question me-2"></i>Roteiro de
           Respostas & Análise Crítica
         </h4>
 
-        <div class="accordion" id="accordionRoteiro">
+        <div class="accordion accordion-collapsible" id="accordionRoteiro">
           <!-- Item: Diferença Caso-Controle Aninhado vs Caso-Coorte -->
           <div class="accordion-item">
-            <h2 class="accordion-header">
+            <h2 class="accordion-header" id="headingDiferenca">
               <button
-                class="accordion-button fw-bold text-primary"
+                class="accordion-button"
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#q_diferenca_desenhos"
+                aria-expanded="true"
+                aria-controls="q_diferenca_desenhos"
               >
-                🔬 Diferenças Epidemiológicas: Caso-Controle Aninhado vs.
-                Caso-Coorte
+                🔬 Diferenças Epidemiológicas: Caso-Controle Aninhado vs. Caso-Coorte
               </button>
             </h2>
             <div
               id="q_diferenca_desenhos"
               class="accordion-collapse collapse show"
+              aria-labelledby="headingDiferenca"
               data-bs-parent="#accordionRoteiro"
             >
-              <div class="accordion-body">
+              <div class="accordion-body bg-white">
                 <p>
-                  Ambos os desenhos são estratégias eficientes de amostragem
-                  conduzidas dentro de um estudo de coorte pré-existente para
-                  reduzir custos e tempo de coleta de dados. A diferença
-                  fundamental reside na
-                  <strong>forma como o grupo controle é selecionado</strong>:
+                  Ambos os desenhos são estratégias eficientes de amostragem conduzidas dentro de um estudo de coorte pré-existente para reduzir custos e tempo de coleta de dados. A diferença fundamental reside na <strong>forma como o grupo controle é selecionado</strong>:
                 </p>
 
                 <div class="table-responsive my-3">
-                  <table
-                    class="table table-bordered table-hover align-middle table-comparacao"
-                  >
+                  <table class="table table-bordered table-hover align-middle table-comparacao">
                     <thead class="table-light">
                       <tr>
                         <th>Característica</th>
@@ -349,62 +490,23 @@
                     <tbody>
                       <tr>
                         <td class="fw-bold">Amostragem dos Controles</td>
-                        <td>
-                          Selecionados do <strong>risk set</strong> (indivíduos
-                          vivos e sem o evento no momento exato em que cada caso
-                          ocorre). Usa pareamento por tempo de incidência
-                          (Density Sampling).
-                        </td>
-                        <td>
-                          Selecionados de uma
-                          <strong>subcoorte aleatória</strong> sorteada no
-                          início do estudo (Baseline), independentemente do
-                          tempo ou da ocorrência do desfecho.
-                        </td>
+                        <td>Selecionados do <strong>risk set</strong> (indivíduos vivos e sem o evento no momento exato em que cada caso ocorre). Usa pareamento por tempo de incidência (Density Sampling).</td>
+                        <td>Selecionados de uma <strong>subcoorte aleatória</strong> sorteada no início do estudo (Baseline), independentemente do tempo ou da ocorrência do desfecho.</td>
                       </tr>
                       <tr>
                         <td class="fw-bold">Reutilização de Controles</td>
-                        <td>
-                          Um indivíduo selecionado como controle para um caso
-                          pode tornar-se um caso mais tarde no tempo de
-                          seguimento.
-                        </td>
-                        <td>
-                          A subcoorte original é fixa e serve como grupo de
-                          comparação para
-                          <strong>múltiplos desfechos diferentes</strong> ao
-                          longo da pesquisa.
-                        </td>
+                        <td>Um indivíduo selecionado como controle para um caso pode tornar-se um caso mais tarde no tempo de seguimento.</td>
+                        <td>A subcoorte original é fixa e serve como grupo de comparação para <strong>múltiplos desfechos diferentes</strong> ao longo da pesquisa.</td>
                       </tr>
                       <tr>
                         <td class="fw-bold">Medida de Associação Estimada</td>
-                        <td>
-                          Estima diretamente a
-                          <strong
-                            >Razão de Taxas de Incidência (Hazard Ratio / Rate
-                            Ratio)</strong
-                          >
-                          via Odds Ratio do pareamento por densidade de
-                          incidência.
-                        </td>
-                        <td>
-                          Estima o <strong>Risco Relativo (RR)</strong> ou Razão
-                          de Riscos Acumulados, necessitando de ponderação
-                          estatística específica.
-                        </td>
+                        <td>Estima diretamente a <strong>Razão de Taxas de Incidência (Hazard Ratio / Rate Ratio)</strong> via Odds Ratio do pareamento por densidade de incidência.</td>
+                        <td>Estima o <strong>Risco Relativo (RR)</strong> ou Razão de Riscos Acumulados, necessitando de ponderação estatística específica.</td>
                       </tr>
                       <tr>
                         <td class="fw-bold">Principal Vantagem</td>
-                        <td>
-                          Excelente alinhamento temporal e controle de viés de
-                          tempo de acompanhamento para exposições variáveis no
-                          tempo.
-                        </td>
-                        <td>
-                          Permite estudar vários desfechos distintos utilizando
-                          a mesma subcoorte de controles (maior eficiência
-                          logística).
-                        </td>
+                        <td>Excelente alinhamento temporal e controle de viés de tempo de acompanhamento para exposições variáveis no tempo.</td>
+                        <td>Permite estudar vários desfechos distintos utilizando a mesma subcoorte de controles (maior eficiência logística).</td>
                       </tr>
                     </tbody>
                   </table>
@@ -415,22 +517,25 @@
 
           <!-- Q1 -->
           <div class="accordion-item">
-            <h2 class="accordion-header">
+            <h2 class="accordion-header" id="headingQ1">
               <button
-                class="accordion-button collapsed fw-bold"
+                class="accordion-button collapsed"
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#q1"
+                aria-expanded="false"
+                aria-controls="q1"
               >
-                Q1. Códigos ATC de Sulfonilureias e Contagem de Prescrições
+                📋 Q1. Códigos ATC de Sulfonilureias e Contagem de Prescrições
               </button>
             </h2>
             <div
               id="q1"
               class="accordion-collapse collapse"
+              aria-labelledby="headingQ1"
               data-bs-parent="#accordionRoteiro"
             >
-              <div class="accordion-body">
+              <div class="accordion-body bg-white">
                 <p>
                   Consultando o Dicionário de Dados do HUF (aba ATC), o subgrupo
                   químico das sulfonilureias corresponde ao código
@@ -460,25 +565,28 @@
 
           <!-- Q2 -->
           <div class="accordion-item">
-            <h2 class="accordion-header">
+            <h2 class="accordion-header" id="headingQ2">
               <button
-                class="accordion-button collapsed fw-bold"
+                class="accordion-button collapsed"
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#q2"
+                aria-expanded="false"
+                aria-controls="q2"
               >
-                Q2. Comparação da Média de Idade e DRC entre Casos e Controles
+                📊 Q2. Comparação da Média de Idade e DRC entre Casos e Controles
               </button>
             </h2>
             <div
               id="q2"
               class="accordion-collapse collapse"
+              aria-labelledby="headingQ2"
               data-bs-parent="#accordionRoteiro"
             >
-              <div class="accordion-body">
+              <div class="accordion-body bg-white">
                 <div class="row text-center g-3 mb-3">
                   <div class="col-md-6">
-                    <div class="p-3 bg-light rounded">
+                    <div class="p-3 bg-light rounded border">
                       <h6>Casos (Hipoglicemia)</h6>
                       <p class="mb-1">
                         <strong>Idade Média:</strong> ~68.4 anos
@@ -487,7 +595,7 @@
                     </div>
                   </div>
                   <div class="col-md-6">
-                    <div class="p-3 bg-light rounded">
+                    <div class="p-3 bg-light rounded border">
                       <h6>Controles</h6>
                       <p class="mb-1">
                         <strong>Idade Média:</strong> ~61.2 anos
@@ -511,22 +619,25 @@
 
           <!-- Q3 & Q4 -->
           <div class="accordion-item">
-            <h2 class="accordion-header">
+            <h2 class="accordion-header" id="headingQ3Q4">
               <button
-                class="accordion-button collapsed fw-bold"
+                class="accordion-button collapsed"
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#q3_q4"
+                aria-expanded="false"
+                aria-controls="q3_q4"
               >
-                Q3 & Q4. Exposição Estrita (90 dias), Tabela 2x2 e OR
+                📐 Q3 & Q4. Exposição Estrita (90 dias), Tabela 2x2 e OR
               </button>
             </h2>
             <div
               id="q3_q4"
               class="accordion-collapse collapse"
+              aria-labelledby="headingQ3Q4"
               data-bs-parent="#accordionRoteiro"
             >
-              <div class="accordion-body">
+              <div class="accordion-body bg-white">
                 <p>
                   Respeitando a janela temporal de exposição de
                   <strong>90 dias anteriores à data índice</strong> (descartando
@@ -563,22 +674,25 @@
 
           <!-- Q5 -->
           <div class="accordion-item">
-            <h2 class="accordion-header">
+            <h2 class="accordion-header" id="headingQ5">
               <button
-                class="accordion-button collapsed fw-bold"
+                class="accordion-button collapsed"
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#q5"
+                aria-expanded="false"
+                aria-controls="q5"
               >
-                Q5. E se ignorássemos o tempo? (Causalidade Reversa)
+                ⚠️ Q5. E se ignorássemos o tempo? (Causalidade Reversa)
               </button>
             </h2>
             <div
               id="q5"
               class="accordion-collapse collapse"
+              aria-labelledby="headingQ5"
               data-bs-parent="#accordionRoteiro"
             >
-              <div class="accordion-body">
+              <div class="accordion-body bg-white">
                 <p>
                   Se redefinirmos a exposição como "qualquer prescrição de
                   sulfonilureia em qualquer data da extração":
@@ -608,22 +722,25 @@
 
           <!-- Q6 & Q7 -->
           <div class="accordion-item">
-            <h2 class="accordion-header">
+            <h2 class="accordion-header" id="headingQ6Q7">
               <button
-                class="accordion-button collapsed fw-bold"
+                class="accordion-button collapsed"
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#q6_q7"
+                aria-expanded="false"
+                aria-controls="q6_q7"
               >
-                Q6 & Q7. Confundimento por DRC e Vieses em Prontuários (PEP)
+                🩺 Q6 & Q7. Confundimento por DRC e Vieses em Prontuários (PEP)
               </button>
             </h2>
             <div
               id="q6_q7"
               class="accordion-collapse collapse"
+              aria-labelledby="headingQ6Q7"
               data-bs-parent="#accordionRoteiro"
             >
-              <div class="accordion-body">
+              <div class="accordion-body bg-white">
                 <h6>Q6. Análise Estratificada por DRC</h6>
                 <p>Ao calcular a OR separadamente em cada estrato de DRC:</p>
                 <ul>
@@ -698,9 +815,9 @@
           <div class="modal-body">
             <p>
               Dados simulados para o exercício da disciplina
-              <strong>INF06001 - UFCSPA</strong>. Abaixo está a
-              amostragem dos dados contidos nos arquivos originais de extração
-              do PEP (Prontuário Eletrônico do Paciente):
+              <strong>INF06001 - UFCSPA</strong>. Abaixo está a amostragem dos
+              dados contidos nos arquivos originais de extração do PEP (Prontuário
+              Eletrônico do Paciente):
             </p>
 
             <nav>
@@ -908,10 +1025,12 @@
                           <strong>idade:</strong> Idade do paciente em anos na
                           data índice.
                         </li>
-                        <li><strong>sexo:</strong> Sexo biológico (M/F).</li>
                         <li>
-                          <strong>drc:</strong> Presença de Doença Renal Crônica
-                          (1 = Sim, 0 = Não).
+                          <strong>sexo:</strong> Sexo biológico (M/F).
+                        </li>
+                        <li>
+                          <strong>drc:</strong> Presença de Doença Renal
+                          Crônica (1 = Sim, 0 = Não).
                         </li>
                         <li>
                           <strong>data_indice:</strong> Data da hipoglicemia
@@ -926,9 +1045,7 @@
                   </div>
                   <div class="col-md-6">
                     <div class="p-3 border rounded bg-light">
-                      <h6 class="fw-bold text-primary">
-                        Tabela de Prescrições
-                      </h6>
+                      <h6 class="fw-bold text-primary">Tabela de Prescrições</h6>
                       <ul class="list-unstyled mb-0 small">
                         <li>
                           <strong>id_prescricao:</strong> Identificador único do
@@ -943,8 +1060,9 @@
                           princípio ativo.
                         </li>
                         <li>
-                          <strong>codigo_atc:</strong> Classificação Anatômica
-                          Terapêutica Química (Ex.: A10BB para Sulfonilureias).
+                          <strong>codigo_atc:</strong> Classificação
+                          Anatômica Terapêutica Química (Ex.: A10BB para
+                          Sulfonilureias).
                         </li>
                         <li>
                           <strong>data_prescricao:</strong> Data de emissão da
@@ -973,6 +1091,7 @@
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-3">
       <div class="container">
+        <p>Desenvolvido por @augustoN9   2026/02 UFCSPA</p>
         <small
           >HUF - Hospital Universitário Fictício | Disciplina INF06001 (UFCSPA)
           | Material Didático Simulado</small
@@ -988,6 +1107,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Application JavaScript Logic -->
-    <script src="js/script.js"></script>
+    <script src="js/script2.js"></script>
   </body>
 </html>

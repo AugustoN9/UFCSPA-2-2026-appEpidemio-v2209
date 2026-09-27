@@ -174,13 +174,13 @@
           html: `
             <div class="text-start">
                 <p><strong>1. Caso-Controle Aninhado (Nested Case-Control):</strong></p>
-                <p class="small text-muted mb-2">Sorteia controles no momento exato (Risk Set) em que cada caso surge na coorte[cite: 2].</p>
+                <p class="small text-muted mb-2">Sorteia controles no momento exato (Risk Set) em que cada caso surge na coorte.</p>
                 
                 <p><strong>2. Caso-Coorte (Case-Cohort):</strong></p>
                 <p class="small text-muted mb-2">Sorteia uma subcoorte de controles no início do estudo (Baseline), que servirá como grupo de comparação para múltiplos desfechos ao longo da pesquisa.</p>
                 
                 <p><strong>3. Vantagem dos Desenhos Aninhados em Coortes:</strong></p>
-                <p class="small text-muted mb-0">Economizam recursos computacionais e humanos mantendo a alta validade interna e temporal da coorte original[cite: 2].</p>
+                <p class="small text-muted mb-0">Economizam recursos computacionais e humanos mantendo a alta validade interna e temporal da coorte original.</p>
             </div>
           `,
           confirmButtonText: "Entendi",
